@@ -59,6 +59,12 @@ export default async function viewTeklif(arg) {
     return;
   }
   if (!onRoute('teklif')) return;
+  // Yayın sürümünde maliyetler kullanıcının yüklediği Excel'den gelir; yüklenmemişse hesap yapılamaz
+  if (veri.eksikMesaj) {
+    $view.innerHTML = `<div class="card"><p>${esc(veri.eksikMesaj)}</p><a href="#veriler" class="primary">Verilere git</a></div>`;
+    return;
+  }
+  if (veri.uyari) toast(veri.uyari);
 
   // Ekranın durumu (kaydedilen teklifin "girdi" kısmı)
   const d = kayitli?.girdi || {

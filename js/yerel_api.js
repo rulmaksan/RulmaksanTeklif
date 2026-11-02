@@ -1,6 +1,7 @@
 // Yayın sürümü (GitHub Pages): panel yok. Ekranların panele attığı istekler (yerel:/api/...) burada, tarayıcının
 // içinde karşılanır; ekran kodu ana uygulamayla birebir aynı kalır.
 //   kasa/araç tabloları, yer listesi, mazot fiyatı -> yayın anında dosyaya yazılmış hali (veri/*.json)
+//   kasa maliyetleri ve oranlar -> yayında YOK; kullanıcının Veriler ekranından yüklediği Excel (localStorage)
 //   adres arama -> OpenStreetMap Nominatim · yol mesafesi -> OSRM (doğrudan tarayıcıdan)
 //   teklifler, carinin elle seçilen konumu -> bu tarayıcının localStorage'ı (başka yere gitmez)
 
@@ -33,7 +34,16 @@ async function cevapla(yol, istek) {
   const q = (k) => u.searchParams.get(k);
   const govde = istek?.body ? JSON.parse(istek.body) : null;
 
-  if (p === '/api/teklif/veriler') return json(await dosya('teklif_veriler'));
+  if (p === '/api/teklif/veriler') {
+    const v = structuredClone(await dosya('teklif_veriler'));
+    const m = oku('maliyetler', null);
+    if (!m) return json({ ...v, eksikMesaj: 'Maliyet tablosu yüklü değil. Üstten "Veriler"e girip maliyet Excel’ini yükleyin.' });
+    const eksik = v.kasalar.filter((k) => !m.kasalar[k.kod]).map((k) => k.kod);
+    v.kasalar = v.kasalar.filter((k) => m.kasalar[k.kod]).map((k) => ({ ...k, ...m.kasalar[k.kod] }));
+    v.param = { ...v.param, ...m.param };
+    if (eksik.length) v.uyari = `Maliyeti olmayan kasalar listede yok: ${eksik.join(', ')}`;
+    return json(v);
+  }
   if (p === '/api/teklif/yerler') return json(await dosya('yerler'));
   if (p === '/api/mazot') return json(await dosya('mazot'));
 
