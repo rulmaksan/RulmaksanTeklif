@@ -1,0 +1,101 @@
+/* Fiyat teklifi ekranı ve teklif formu çıktısı (sadece bu ekranlarda yüklenir). */
+main.genis { max-width: 1280px; }
+.teklif-izgara [hidden] { display: none !important; }
+.teklif-ust { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.teklif-izgara { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; align-items: start; }
+@media (max-width: 480px) { .teklif-izgara { grid-template-columns: 1fr; } }
+.teklif-izgara .card { padding: 18px 20px; }
+.teklif-izgara .genis { grid-column: 1 / -1; }
+.teklif-izgara h3 { margin: 0 0 14px; font-size: 17px; }
+.teklif-izgara label { display: block; flex: 1; margin-bottom: 10px; }
+.teklif-izgara .row { gap: 14px; }
+.yer-sec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.yer-sec label { margin-bottom: 0; }
+.yer-ara { display: flex; gap: 8px; margin-top: 10px; }
+.yer-ara input { flex: 1; }
+.yer-ara button { flex: none; }
+.arac-cizim-kutu { margin: 16px 0 4px; padding: 12px; border-radius: 10px; background: #fff; } /* siluet resimleri beyaz zeminli */
+.arac-cizim { width: 100%; height: auto; max-height: 220px; display: block; margin: 0 auto; }
+.alan-baslik { font-weight: 600; margin: 14px 0 8px; }
+/* Araç: büyük, dokunması kolay kartlar */
+.arac-sec { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.arac-sec button { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; min-height: 64px;
+  border: 1.5px solid var(--line, #dde5e0); border-radius: 10px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.arac-sec button b { font-size: 15px; }
+/* Kartta küçük siluet: beyaz zeminli resimler koyu temada da düzgün görünsün diye açık kutu içinde */
+.arac-simge { width: 100%; height: 46px; background: #fff; border-radius: 6px; padding: 4px; box-sizing: border-box; margin-bottom: 4px; }
+.arac-sec button small { opacity: 0.7; }
+.arac-sec button.on { border-color: var(--yesil, #3a9a48); background: rgba(58, 154, 72, 0.15); }
+.mazot-alan { max-width: 220px; margin-top: 14px; }
+/* Kasa: her kalem ayrı blok */
+.kalem { border: 1.5px solid var(--line, #dde5e0); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+.kalem-ust { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.kalem-ust select { flex: 1; font-size: 16px; min-height: 44px; }
+.kalem-no { width: 28px; height: 28px; border-radius: 50%; background: var(--yesil, #3a9a48); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; }
+.kalem-sil { flex: none; width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line, #dde5e0); background: transparent; color: #c0392b; cursor: pointer; }
+.kalem-alt { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.kalem-alt label { margin-bottom: 0; }
+.kalem-alt input { font-size: 16px; min-height: 44px; }
+.kalem-bilgi { margin-top: 8px; }
+.kalem-ekle { width: 100%; padding: 12px; border: 1.5px dashed var(--line, #dde5e0); border-radius: 10px; background: transparent; color: inherit; cursor: pointer; }
+.teklif-izgara .onay { display: flex; align-items: center; gap: 6px; }
+.teklif-izgara .onay input { width: auto; }
+.chips button.on { background: var(--yesil, #3a9a48); color: #fff; border-color: transparent; }
+.teklif-harita { height: 260px; border-radius: 10px; margin: 10px 0 4px; z-index: 0; }
+.doluluk { margin: 12px 0 6px; }
+.doluluk-cubuk { height: 12px; border-radius: 6px; background: rgba(127, 127, 127, 0.25); overflow: hidden; margin-bottom: 4px; }
+.doluluk-cubuk span { display: block; height: 100%; background: #3a9a48; transition: width 0.2s; }
+.doluluk-cubuk span.asim { background: #c0392b; }
+.bilgi-kutu { border-left: 3px solid #3a9a48; padding: 8px 10px; background: rgba(58, 154, 72, 0.1); border-radius: 0; }
+.bos-baslik { font-weight: 700; margin-bottom: 6px; }
+.bos-satir { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; border-top: 1px solid rgba(127, 127, 127, 0.2); }
+.tablo-kaydir { overflow-x: auto; }
+.teklif-tablo { width: 100%; border-collapse: collapse; font-size: 13px; }
+.teklif-tablo th, .teklif-tablo td { padding: 6px 8px; border-bottom: 1px solid rgba(127, 127, 127, 0.25); text-align: right; white-space: nowrap; }
+.teklif-tablo th:first-child, .teklif-tablo td:first-child { text-align: left; }
+.teklif-tablo [data-vade] { cursor: pointer; }
+.teklif-tablo th[data-vade] { text-decoration: underline dotted; }
+.teklif-tablo td[data-vade]:hover { background: rgba(58, 154, 72, 0.1); }
+.teklif-tablo .secili { background: rgba(58, 154, 72, 0.18); font-weight: 600; }
+.teklif-tablo .iyi { color: #3a9a48; }
+.teklif-tablo tr.dip-alti td { color: #c0392b; }
+.hata { color: #c0392b; margin: 4px 0; }
+.toplamlar { flex: 2; align-self: end; text-align: right; font-size: 15px; }
+.teklif-satir { display: grid; grid-template-columns: 2fr 2fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+
+/* ---------- Teklif formu (EP_TEKLİF FORMU) ---------- */
+.yazdir-arac { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+/* Form A4 yatay genişliğinde sabit: ekran darsa yana kayar, baskıda sayfaya oturur */
+.form-kaydir { overflow-x: auto; }
+.teklif-form { background: #fff; color: #000; padding: 10mm; font-family: Arial, sans-serif; font-size: 11px; width: 281mm; box-sizing: border-box; margin: 0 auto; }
+.teklif-form .kalemler { table-layout: fixed; }
+.teklif-form .kalemler th:nth-child(1) { width: 4%; }
+.teklif-form .kalemler th:nth-child(2) { width: 11%; }
+.teklif-form .kalemler th:nth-child(3) { width: 15%; }
+.teklif-form .kalemler th:nth-child(4) { width: 9%; }
+.teklif-form header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #3a9a48; padding-bottom: 8px; margin-bottom: 10px; }
+.teklif-form .logo { height: 48px; }
+.teklif-form .baslik { flex: 1; text-align: center; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+.teklif-form .no { font-weight: 700; }
+.teklif-form table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.teklif-form th, .teklif-form td { border: 1px solid #555; padding: 4px 6px; vertical-align: middle; }
+.teklif-form .ust-bilgi th { background: #eee; text-align: left; width: 13%; white-space: nowrap; }
+.teklif-form .kosul { font-size: 9px; }
+.teklif-form .kalemler th { background: #23282a; color: #fff; font-size: 9.5px; }
+.teklif-form .kalemler th.secili, .teklif-form .kalemler td.secili { background: #c6efce; color: #000; font-weight: 700; }
+.teklif-form .kalemler td { text-align: right; }
+.teklif-form .kalemler td:nth-child(-n+4) { text-align: left; }
+.teklif-form tfoot td { font-weight: 700; text-align: right; }
+.teklif-form tfoot tr.genel td { background: #eee; font-size: 12px; }
+.teklif-form .not { font-size: 9.5px; color: #333; }
+
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  body * { visibility: hidden; }
+  .teklif-form, .teklif-form * { visibility: visible; }
+  .form-kaydir { overflow: visible; }
+  .teklif-form { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+  .noprint { display: none !important; }
+  .teklif-form th, .teklif-form td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
