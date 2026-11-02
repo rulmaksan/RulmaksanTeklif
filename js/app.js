@@ -1,13 +1,13 @@
 // Yayın sürümü kabuğu: Fiyat teklifi, kayıtlı teklifler, teklif formu ve Veriler (cari listesi + maliyet tablosu).
 // Cari listesi ve maliyetler depoda yoktur: her kullanıcı kendi Excel'lerini Veriler'den bu tarayıcıya yükler.
-import './yerel_api.js';
-import { $view, ref, esc, toast, pickFile, yenileCariler } from './ortak.js';
-import { cariExceliOku } from './cari_excel.js';
-import { maliyetExceliOku } from './maliyet_yukle.js';
+import './yerel_api.js?v=202611021601';
+import { $view, ref, esc, toast, pickFile, yenileCariler } from './ortak.js?v=202611021601';
+import { cariExceliOku } from './cari_excel.js?v=202611021601';
+import { maliyetExceliOku } from './maliyet_yukle.js?v=202611021601';
 
 const EKRANLAR = {
-  teklif: () => import('./ekranlar/teklif.js'),
-  teklifyaz: () => import('./ekranlar/teklifyaz.js'),
+  teklif: () => import('./ekranlar/teklif.js?v=202611021601'),
+  teklifyaz: () => import('./ekranlar/teklifyaz.js?v=202611021601'),
   veriler: async () => ({ default: verilerEkrani }),
 };
 const oku = (k) => {

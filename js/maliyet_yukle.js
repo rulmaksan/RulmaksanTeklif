@@ -2,7 +2,7 @@
 // okunur, hiçbir yere gönderilmez; sonuç localStorage 'maliyetler'e yazılır ve yerel_api.js tablolara ekler.
 //   Kasalar sayfası: Kasa | Kullanım | Gramaj (gr) | Maliyet (TL)
 //   Parametreler sayfası: Ad | Değer  (Kâr oranı, Aylık vade farkı, DBS iskontosu, İşgaliye, Harcırah a-b km, Ödeme koşulu)
-import { kucuk } from './secici.js';
+import { kucuk } from './secici.js?v=202611021601';
 
 function okuyucu() {
   if (window.XLSX) return Promise.resolve(window.XLSX);

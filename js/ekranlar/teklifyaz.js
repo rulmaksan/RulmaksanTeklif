@@ -1,16 +1,16 @@
 // Teklif formu çıktısı: Excel'deki "EP_TEKLİF FORMU" sayfasının düzeni (A4 yatay). Anlaşılan vade sütunu yeşil;
 // istenirse sadece o sütun basılır. "PDF indir" doğrudan dosya verir (son 20 PDF uygulamada saklanır, seçilmişse
 // teklif klasörüne yıl / ay alt klasörüyle yazılır); "Yazdır" kâğıda basar.
-import { $view, esc, toast, onRoute, panelAdresi } from '../ortak.js';
-import { tl } from '../teklif_hesap.js';
-import { pdfUret, arsiveEkle, klasoreYaz, indir, sonTekliflerCiz } from '../pdf_arsiv.js';
+import { $view, esc, toast, onRoute, panelAdresi } from '../ortak.js?v=202611021601';
+import { tl } from '../teklif_hesap.js?v=202611021601';
+import { pdfUret, arsiveEkle, klasoreYaz, indir, sonTekliflerCiz } from '../pdf_arsiv.js?v=202611021601';
 
 function stilYukle() {
   if (document.getElementById('teklif-css')) return;
   const link = document.createElement('link');
   link.id = 'teklif-css';
   link.rel = 'stylesheet';
-  link.href = 'teklif.css';
+  link.href = 'teklif.css?v=202611021601';
   document.head.appendChild(link);
 }
 

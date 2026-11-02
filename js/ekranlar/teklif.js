@@ -1,11 +1,11 @@
 // Fiyat teklifi: müşteri (kayıtlı cari ya da tek seferlik) -> haritada teslim yeri -> gidiş km -> araç, kasalar
 // -> doluluk, nakliye payı, dip fiyat, kâr, vadeli fiyatlar -> kaydet ve teklif formunu yazdır.
 // Hesap js/teklif_hesap.js'te; tablolar, konum, mesafe, mazot ve kayıt panelde (netsis-kesif/teklif.py, mazot.py).
-import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js';
-import { secici } from '../secici.js';
-import { hesapla, VADELER, tl } from '../teklif_hesap.js';
-import { aracCizim, aracSimge, KASA_RENK } from '../arac_cizim.js';
-import { sonTekliflerCiz } from '../pdf_arsiv.js';
+import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js?v=202611021601';
+import { secici } from '../secici.js?v=202611021601';
+import { hesapla, VADELER, tl } from '../teklif_hesap.js?v=202611021601';
+import { aracCizim, aracSimge, KASA_RENK } from '../arac_cizim.js?v=202611021601';
+import { sonTekliflerCiz } from '../pdf_arsiv.js?v=202611021601';
 
 const ayar = () => JSON.parse(localStorage.getItem('netsis-cfg') || '{}');
 const ayarYaz = (d) => localStorage.setItem('netsis-cfg', JSON.stringify({ ...ayar(), ...d }));
@@ -41,7 +41,7 @@ function stilYukle() {
   const link = document.createElement('link');
   link.id = 'teklif-css';
   link.rel = 'stylesheet';
-  link.href = 'teklif.css';
+  link.href = 'teklif.css?v=202611021601';
   document.head.appendChild(link);
 }
 

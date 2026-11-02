@@ -2,7 +2,7 @@
 // Sütunlar başlıktan bulunur (büyük/küçük harf ve Türkçe harf farkı gözetmez):
 //   kod: cari kodu · unvan: ünvan / cari isim / firma · adres · il / şehir · ilçe · tel · vergiNo: vergi no / VKN / TCKN
 // Okuyucu (SheetJS) sadece bu işlem yapılınca yüklenir.
-import { kucuk } from './secici.js';
+import { kucuk } from './secici.js?v=202611021601';
 
 const SUTUNLAR = {
   kod: [/cari.?kod/, /^kod$/, /hesap.?kod/],
