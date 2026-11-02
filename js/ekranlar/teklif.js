@@ -1,11 +1,11 @@
 // Fiyat teklifi: müşteri (kayıtlı cari ya da tek seferlik) -> haritada teslim yeri -> gidiş km -> araç, kasalar
 // -> doluluk, nakliye payı, dip fiyat, kâr, vadeli fiyatlar -> kaydet ve teklif formunu yazdır.
 // Hesap js/teklif_hesap.js'te; tablolar, konum, mesafe, mazot ve kayıt panelde (netsis-kesif/teklif.py, mazot.py).
-import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js?v=202611021601';
-import { secici } from '../secici.js?v=202611021601';
-import { hesapla, VADELER, tl } from '../teklif_hesap.js?v=202611021601';
-import { aracCizim, aracSimge, KASA_RENK } from '../arac_cizim.js?v=202611021601';
-import { sonTekliflerCiz } from '../pdf_arsiv.js?v=202611021601';
+import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js?v=202611021608';
+import { secici } from '../secici.js?v=202611021608';
+import { hesapla, VADELER, tl } from '../teklif_hesap.js?v=202611021608';
+import { aracCizim, aracSimge, KASA_RENK } from '../arac_cizim.js?v=202611021608';
+import { sonTekliflerCiz } from '../pdf_arsiv.js?v=202611021608';
 
 const ayar = () => JSON.parse(localStorage.getItem('netsis-cfg') || '{}');
 const ayarYaz = (d) => localStorage.setItem('netsis-cfg', JSON.stringify({ ...ayar(), ...d }));
@@ -41,7 +41,7 @@ function stilYukle() {
   const link = document.createElement('link');
   link.id = 'teklif-css';
   link.rel = 'stylesheet';
-  link.href = 'teklif.css?v=202611021601';
+  link.href = 'teklif.css?v=202611021608';
   document.head.appendChild(link);
 }
 
@@ -74,7 +74,7 @@ export default async function viewTeklif(arg) {
     mazot: '', mazotIl: ayar().mazotIl || 'ANTALYA',
     kalemler: [{ kasa: '30X50X14', adet: '', fiyat: '' }],
     vade: '30', ozelGun: '', digerVadeleriGizle: false, dbs: false,
-    teklifVeren: ayar().teklifVeren || '',
+    teklifVeren: 'Nuray Sakarya', // teklifleri veren sabit kişi (formda değiştirilebilir, bir sonraki teklifte yine bu gelir)
   };
   let sonuc;
 
@@ -527,7 +527,7 @@ export default async function viewTeklif(arg) {
     if (!sonuc?.satirlar.length) return toast('Kasa ve adet girin');
     if (!(Number(d.km) >= 0) || d.km === '') return toast('Gidiş km\'si gerekli: haritadan seçin ya da yazın');
     if (sonuc.satirlar.some((k) => k.dipAlti)) return toast('Dip fiyatın altında kalem var: teklif çıkmaz');
-    ayarYaz({ teklifVeren: d.teklifVeren, mazotIl: d.mazotIl });
+    ayarYaz({ mazotIl: d.mazotIl });
     try {
       const { no } = await api('/api/teklif', {
         no: kayitli?.no,
