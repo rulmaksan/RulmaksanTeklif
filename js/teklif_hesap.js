@@ -28,7 +28,9 @@ export function harcirah(km, barem) {
 }
 
 // girdi: { veri (panelden tablolar), km, mazot, arac (kod), kalemler: [{kasa, adet, fiyat}], ekKalem (sira) }
-export function hesapla({ veri, km, mazot, arac, kalemler }) {
+// ekKar: satışçının dip fiyatın üstüne koyduğu kâr (0,05 = %5). Fiyatı boş kalemlerde fiyat = dip x (1 + ekKar);
+// teklif formunda sadece fiyat görünür, müşteri dip fiyatı da eklenen kârı da görmez.
+export function hesapla({ veri, km, mazot, arac, kalemler, ekKar = 0 }) {
   const p = veri.param;
   const a = veri.araclar.find((x) => x.kod === arac);
   const satirlar = kalemler
@@ -58,7 +60,8 @@ export function hesapla({ veri, km, mazot, arac, kalemler }) {
     k.maliyet = k.kasaB.maliyet;
     k.nakliye = k.kapasite && doluluk ? nakliyeToplam / (k.kapasite * doluluk) : 0;
     k.dip = yukari2((k.maliyet + k.nakliye) * (1 + p.kar));
-    k.fiyat = Number(k.fiyat) > 0 ? Number(k.fiyat) : k.dip;
+    k.elleFiyat = Number(k.fiyat) > 0;
+    k.fiyat = k.elleFiyat ? Number(k.fiyat) : yukari2(k.dip * (1 + (Number(ekKar) || 0)));
     k.dipAlti = k.fiyat < k.dip;
     if (k.dipAlti) hata.push(`${k.kasa}: verilen fiyat ${tl(k.fiyat)} dip fiyatın (${tl(k.dip)}) altında`);
     k.kar = k.fiyat - k.maliyet - k.nakliye;

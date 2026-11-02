@@ -107,3 +107,19 @@ main.genis { max-width: 1280px; }
   .noprint { display: none !important; }
   .teklif-form th, .teklif-form td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Dip fiyata gizli kâr */
+.ek-kar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 6px; }
+.ek-kar .chips { margin: 0; }
+.ek-kar-ozel { display: flex; align-items: center; gap: 6px; margin: 0; white-space: nowrap; }
+.ek-kar-ozel input { width: 80px; }
+
+/* Kasa satırında "Aracı doldur" */
+.kalem-doldur { flex: none; min-height: 40px; padding: 0 12px; border-radius: 8px; border: 1.5px solid var(--yesil, #3a9a48);
+  background: transparent; color: var(--yesil, #3a9a48); font-weight: 600; cursor: pointer; white-space: nowrap; }
+.kalem-doldur:hover { background: var(--yesil, #3a9a48); color: #fff; }
+
+/* Araç çiziminde kasa tiplerinin renk açıklaması */
+.arac-renkler { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 8px 4px 0; color: #222; font-size: 14px; }
+.arac-renkler span { display: inline-flex; align-items: center; gap: 6px; }
+.arac-renkler i { width: 16px; height: 16px; border-radius: 3px; border: 1px solid #999; }

@@ -4,7 +4,7 @@
 import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js';
 import { secici } from '../secici.js';
 import { hesapla, VADELER, tl } from '../teklif_hesap.js';
-import { aracCizim, aracSimge } from '../arac_cizim.js';
+import { aracCizim, aracSimge, KASA_RENK } from '../arac_cizim.js';
 import { sonTekliflerCiz } from '../pdf_arsiv.js';
 
 const ayar = () => JSON.parse(localStorage.getItem('netsis-cfg') || '{}');
@@ -138,6 +138,12 @@ export default async function viewTeklif(arg) {
 
       <section class="card genis">
         <h3>3 · Fiyat ve kâr (kasa başı)</h3>
+        <div class="ek-kar">
+          <span>Dip fiyata kâr ekle <small class="muted">(müşteri görmez)</small></span>
+          <div class="chips" id="ekKar">${[0, 1, 3, 5, 7, 10].map((y) => `<button type="button" data-y="${y}">${y ? `%${y}` : 'Yok'}</button>`).join('')}</div>
+          <label class="ek-kar-ozel">Diğer %<input id="ekKarOzel" type="number" inputmode="decimal" step="any" min="0"></label>
+        </div>
+        <p class="muted small">Peşin fiyatı boş bırakılan kasalarda fiyat = dip fiyat + eklenen kâr. Fiyatı elle yazılan kasaya uygulanmaz.</p>
         <div id="hatalar"></div>
         <div class="tablo-kaydir"><table class="teklif-tablo" id="fiyatTablo"></table></div>
         <p class="muted small" id="seferNot"></p>
@@ -345,11 +351,12 @@ export default async function viewTeklif(arg) {
         <div class="kalem-ust">
           <span class="kalem-no">${i + 1}</span>
           <select data-a="kasa" aria-label="Kasa">${kasaSecenek}</select>
+          <button type="button" class="kalem-doldur" data-doldur title="Araçta kalan bütün yeri bu kasayla doldur">Aracı doldur</button>
           <button type="button" class="kalem-sil" data-sil aria-label="Kasayı sil">✕</button>
         </div>
         <div class="kalem-alt">
           <label>Adet<input data-a="adet" type="number" inputmode="numeric" min="0" value="${esc(k.adet)}"></label>
-          <label>Peşin fiyat (₺)<input data-a="fiyat" type="number" inputmode="decimal" step="0.01" min="0" value="${esc(k.fiyat)}" placeholder="boşsa dip fiyat"></label>
+          <label>Peşin fiyat (₺)<input data-a="fiyat" type="number" inputmode="decimal" step="0.01" min="0" value="${esc(k.fiyat)}" placeholder="boşsa dip + ek kâr"></label>
         </div>
         <div class="kalem-bilgi muted small" data-bilgi></div>
       </div>`).join('');
@@ -365,6 +372,20 @@ export default async function viewTeklif(arg) {
   });
   el('kalemler').addEventListener('click', (e) => {
     const satir = e.target.closest('.kalem');
+    if (satir && e.target.matches('[data-doldur]')) {
+      // Diğer kasaların kapladığı yer düşülür, kalan yer bu kasanın bu araçtaki kapasitesiyle doldurulur
+      const i = Number(satir.dataset.i);
+      const kap = (kod) => veri.kasalar.find((x) => x.kod === kod)?.kapasite[d.arac] || 0;
+      const kapasite = kap(d.kalemler[i].kasa);
+      if (!kapasite) return toast('Bu kasanın seçilen araçta kapasitesi yok');
+      const diger = d.kalemler.reduce((t, k, j) => t + (j !== i && kap(k.kasa) ? (Number(k.adet) || 0) / kap(k.kasa) : 0), 0);
+      const adet = Math.floor(Math.max(0, 1 - diger) * kapasite + 1e-9);
+      if (!adet) return toast('Araç diğer kasalarla zaten dolu');
+      d.kalemler[i].adet = String(adet);
+      satir.querySelector('[data-a="adet"]').value = adet;
+      yenile();
+      return toast(`${adet.toLocaleString('tr-TR')} adet ile araç dolu`);
+    }
     if (!e.target.matches('[data-sil]') || !satir) return;
     d.kalemler.splice(Number(satir.dataset.i), 1);
     if (!d.kalemler.length) d.kalemler.push({ kasa: veri.kasalar[0].kod, adet: '', fiyat: '' });
@@ -401,11 +422,35 @@ export default async function viewTeklif(arg) {
   };
   el('gizle').onchange = () => (d.digerVadeleriGizle = el('gizle').checked);
 
+  // ---------- dip fiyata gizli kâr (yüzde olarak saklanır: 5 = %5)
+  d.ekKar ??= 0;
+  const ekKarGoster = () => {
+    const hazir = el('ekKar').querySelectorAll('button');
+    hazir.forEach((b) => b.classList.toggle('on', Number(b.dataset.y) === Number(d.ekKar)));
+    el('ekKarOzel').value = [...hazir].some((b) => Number(b.dataset.y) === Number(d.ekKar)) ? '' : d.ekKar;
+  };
+  el('ekKar').onclick = (e) => {
+    const b = e.target.closest('button[data-y]');
+    if (!b) return;
+    d.ekKar = Number(b.dataset.y);
+    ekKarGoster();
+    yenile();
+  };
+  el('ekKarOzel').addEventListener('input', () => {
+    d.ekKar = Math.max(0, Number(el('ekKarOzel').value) || 0);
+    el('ekKar').querySelectorAll('button').forEach((b) => b.classList.toggle('on', Number(b.dataset.y) === d.ekKar && !el('ekKarOzel').value));
+    yenile();
+  });
+  ekKarGoster();
+
   // ---------- sonuç
   function yenile() {
-    sonuc = hesapla({ veri, km: d.km, mazot: d.mazot, arac: d.arac, kalemler: d.kalemler });
+    sonuc = hesapla({ veri, km: d.km, mazot: d.mazot, arac: d.arac, kalemler: d.kalemler, ekKar: (Number(d.ekKar) || 0) / 100 });
     const yuzde = Math.round(sonuc.doluluk * 100);
-    el('aracCizim').innerHTML = aracCizim(d.arac, sonuc.doluluk);
+    // Her kasa tipi kendi renginde (1. siyah, 2. gri…); birden fazla tip varsa altında renk açıklaması
+    el('aracCizim').innerHTML = aracCizim(d.arac, sonuc.satirlar.map((k) => k.doluluk)) + (sonuc.satirlar.length > 1
+      ? `<div class="arac-renkler">${sonuc.satirlar.map((k, i) => `<span><i style="background:${KASA_RENK[i % KASA_RENK.length]}"></i>${
+        esc(k.kasa)} · %${Math.round(k.doluluk * 100)}</span>`).join('')}</div>` : '');
     el('dolulukCubuk').style.width = `${Math.min(100, yuzde)}%`;
     el('dolulukCubuk').classList.toggle('asim', sonuc.doluluk > 1);
     el('dolulukYazi').textContent = sonuc.satirlar.length
