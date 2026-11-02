@@ -66,6 +66,14 @@ main.genis { max-width: 1280px; }
 
 /* ---------- Teklif formu (EP_TEKLİF FORMU) ---------- */
 .yazdir-arac { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.yazdir-dugmeler { display: flex; gap: 8px; }
+.son-teklifler { margin-top: 16px; max-width: 281mm; margin-left: auto; margin-right: auto; }
+.son-baslik { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.son-baslik h3 { margin: 0; }
+.son-liste { list-style: none; padding: 0; margin: 10px 0 0; }
+.son-liste li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid rgba(127, 127, 127, 0.2); }
+.son-liste li div { display: flex; flex-direction: column; }
+.son-dugmeler { display: flex; gap: 6px; flex: none; }
 /* Form A4 yatay genişliğinde sabit: ekran darsa yana kayar, baskıda sayfaya oturur */
 .form-kaydir { overflow-x: auto; }
 .teklif-form { background: #fff; color: #000; padding: 10mm; font-family: Arial, sans-serif; font-size: 11px; width: 281mm; box-sizing: border-box; margin: 0 auto; }

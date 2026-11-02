@@ -5,6 +5,7 @@ import { $view, ref, esc, toast, onRoute, panelAdresi } from '../ortak.js';
 import { secici } from '../secici.js';
 import { hesapla, VADELER, tl } from '../teklif_hesap.js';
 import { aracCizim, aracSimge } from '../arac_cizim.js';
+import { sonTekliflerCiz } from '../pdf_arsiv.js';
 
 const ayar = () => JSON.parse(localStorage.getItem('netsis-cfg') || '{}');
 const ayarYaz = (d) => localStorage.setItem('netsis-cfg', JSON.stringify({ ...ayar(), ...d }));
@@ -512,10 +513,13 @@ async function liste() {
   if (!onRoute('teklif')) return;
   $view.innerHTML = `
     <div class="teklif-ust"><h2>Kayıtlı teklifler</h2><a href="#teklif" class="small">+ Yeni teklif</a></div>
+    <section class="card son-teklifler" id="sonTeklifler"></section>
+    <h3>Bütün teklifler</h3>
     ${l.length ? l.map((t) => `
       <div class="card teklif-satir">
         <b>${esc(t.musteri)}</b><span class="muted">${esc(t.no)} · ${t.tarih.split('-').reverse().join('.')}${t.olusturan ? ` · ${esc(t.olusturan)}` : ''}</span>
         <span>${t.toplam != null ? `Peşin ${tl(t.toplam)}` : ''}</span>
         <span class="small"><a href="#teklif/${encodeURIComponent(t.no)}">Düzenle</a> · <a href="#teklifyaz/${encodeURIComponent(t.no)}">Formu aç</a></span>
       </div>`).join('') : '<p class="muted">Henüz teklif yok.</p>'}`;
+  sonTekliflerCiz(document.getElementById('sonTeklifler'), toast);
 }

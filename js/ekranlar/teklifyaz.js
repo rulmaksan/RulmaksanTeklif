@@ -1,7 +1,9 @@
 // Teklif formu çıktısı: Excel'deki "EP_TEKLİF FORMU" sayfasının düzeni (A4 yatay). Anlaşılan vade sütunu yeşil;
-// istenirse sadece o sütun basılır. Yazdır -> kâğıda ya da "PDF olarak kaydet" ile dosyaya.
+// istenirse sadece o sütun basılır. "PDF indir" doğrudan dosya verir (son 20 PDF uygulamada saklanır, seçilmişse
+// teklif klasörüne yıl / ay alt klasörüyle yazılır); "Yazdır" kâğıda basar.
 import { $view, esc, toast, onRoute, panelAdresi } from '../ortak.js';
 import { tl } from '../teklif_hesap.js';
+import { pdfUret, arsiveEkle, klasoreYaz, indir, sonTekliflerCiz } from '../pdf_arsiv.js';
 
 function stilYukle() {
   if (document.getElementById('teklif-css')) return;
@@ -38,7 +40,10 @@ export default async function viewTeklifYaz(no) {
   $view.innerHTML = `
     <div class="yazdir-arac noprint">
       <a href="#teklif/${encodeURIComponent(t.no)}">← Teklife dön</a>
-      <button type="button" class="primary" id="yazdir">Yazdır / PDF</button>
+      <span class="yazdir-dugmeler">
+        <button type="button" class="primary" id="pdfIndir">PDF indir</button>
+        <button type="button" id="yazdir">Yazdır</button>
+      </span>
     </div>
     <div class="form-kaydir"><article class="teklif-form">
       <header>
@@ -71,12 +76,39 @@ export default async function viewTeklifYaz(no) {
       </table>
       <p class="not">Fiyatlar Türk Lirası, birim kasa başıdır. Nakliye fiyata dahildir (${esc(String(s.km))} km, ${esc(s.aracAd)}).
         Teklif ${tarih} tarihli mazot fiyatıyla hesaplanmıştır.</p>
-    </article></div>`;
-  // "PDF olarak kaydet"te tarayıcı sayfa başlığını dosya adı yapar: Teklif - Cari - İlgili - T_261102_001
+    </article></div>
+    <section class="card son-teklifler noprint" id="sonTeklifler"></section>`;
+  // Dosya adı: Teklif - Cari - İlgili - T_261102_001 (PDF indir'de ve yazdırmada "PDF olarak kaydet"te)
   const dosyaAdi = ['Teklif', m.unvan, m.ilgili, t.no]
     .filter(Boolean)
     .map((x) => String(x).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim())
     .join(' - ');
+  const sonKutu = document.getElementById('sonTeklifler');
+  sonTekliflerCiz(sonKutu, toast);
+  document.getElementById('pdfIndir').onclick = async (e) => {
+    const b = e.currentTarget;
+    b.disabled = true;
+    b.textContent = 'PDF hazırlanıyor…';
+    try {
+      const blob = await pdfUret(document.querySelector('.teklif-form'));
+      const ad = `${dosyaAdi}.pdf`;
+      await arsiveEkle({ no: t.no, dosyaAdi: ad, musteri: m.unvan, ilgili: m.ilgili || '', zaman: new Date().toISOString(), blob });
+      let yol = null;
+      try {
+        yol = await klasoreYaz(ad, blob);
+      } catch {
+        yol = null; // klasöre yazılamadı (izin, taşınmış klasör): normal indirmeye düş
+      }
+      if (yol) toast(`Kaydedildi: ${yol}`);
+      else indir(ad, blob);
+      sonTekliflerCiz(sonKutu, toast);
+    } catch (err) {
+      toast(`PDF oluşturulamadı: ${err.message}`);
+    } finally {
+      b.disabled = false;
+      b.textContent = 'PDF indir';
+    }
+  };
   document.getElementById('yazdir').onclick = () => {
     const eski = document.title;
     document.title = dosyaAdi;
